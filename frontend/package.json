@@ -1,0 +1,14 @@
+{
+  "name": "financeflow-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tailwindcss -i ./styles/tailwind.css -o ./assets/app.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}

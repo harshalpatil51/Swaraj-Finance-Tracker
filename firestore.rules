@@ -1,0 +1,73 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function ownsUserData(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    match /users/{userId}/transactions/{transactionId} {
+      allow read, delete: if ownsUserData(userId);
+      allow create, update: if ownsUserData(userId)
+        && request.resource.data.keys().hasAll([
+          'type', 'title', 'amount', 'category', 'paymentMethod', 'date', 'notes'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'type', 'title', 'amount', 'category', 'paymentMethod', 'date', 'notes'
+        ])
+        && request.resource.data.type in ['Income', 'Expense', 'Savings']
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 200
+        && (request.resource.data.amount is int || request.resource.data.amount is float)
+        && request.resource.data.amount >= 0
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.category.size() <= 100
+        && request.resource.data.paymentMethod is string
+        && request.resource.data.paymentMethod.size() > 0
+        && request.resource.data.paymentMethod.size() <= 100
+        && request.resource.data.date is string
+        && request.resource.data.date.size() == 10
+        && request.resource.data.notes is string
+        && request.resource.data.notes.size() <= 1000;
+    }
+
+    match /users/{userId}/imports/{importId} {
+      allow read: if ownsUserData(userId);
+      allow create, update: if ownsUserData(userId)
+        && request.resource.data.keys().hasOnly([
+          'sha256', 'sourceFile', 'worksheet', 'columns', 'rowCount', 'status', 'importedCount'
+        ])
+        && request.resource.data.sha256 is string
+        && request.resource.data.sourceFile is string
+        && request.resource.data.worksheet is string
+        && request.resource.data.columns is list
+        && request.resource.data.rowCount is int
+        && request.resource.data.rowCount > 0
+        && request.resource.data.status in ['in_progress', 'complete']
+        && (!('importedCount' in request.resource.data)
+          || request.resource.data.importedCount is int);
+
+      match /rows/{rowId} {
+        allow read: if ownsUserData(userId);
+        allow create, update: if ownsUserData(userId)
+          && request.resource.data.keys().hasOnly(['rowNumber', 'values'])
+          && request.resource.data.rowNumber is int
+          && request.resource.data.rowNumber > 0
+          && request.resource.data.values is list
+          && request.resource.data.values.size() == 5;
+      }
+    }
+
+    match /users/{userId}/settings/{settingId} {
+      allow read: if ownsUserData(userId);
+      allow create, update: if ownsUserData(userId)
+        && settingId == 'app'
+        && request.resource.data.keys().hasOnly(['budgets', 'customCategories'])
+        && (!('budgets' in request.resource.data) || request.resource.data.budgets is map)
+        && (!('customCategories' in request.resource.data) || request.resource.data.customCategories is map);
+      allow delete: if ownsUserData(userId) && settingId == 'app';
+    }
+  }
+}

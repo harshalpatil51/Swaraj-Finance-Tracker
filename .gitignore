@@ -1,0 +1,26 @@
+*:Zone.Identifier
+*:sec.endpointdlp
+
+# Local financial source data
+*.xlsx
+
+# Local Python artifacts
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/
+.vercel/
+npm-debug.log*
+
+# Firebase local state and logs
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Local credentials and environment files
+.env
+.env.*
+!.env.example
+*service-account*.json
+*-firebase-adminsdk-*.json

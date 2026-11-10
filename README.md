@@ -66,3 +66,10 @@ Use the dashboard's JSON backup export to save a copy. Importing a JSON backup r
 Deleting a transaction requires typing `DELETE` in the confirmation dialog before the permanent delete button is enabled.
 
 Excel workbooks and other local financial source files are ignored by Git because they may contain private data.
+
+
+Important Setting
+1. For this project I have used firebase account of swaraj patil: https://console.firebase.google.com/u/1/project/swaraj-finance-tracker/firestore/databases/-default-/security/rules
+2. This is url for his app: https://swaraj-finance-tracker-frontend-kw43pdedm-harshalpatil51.vercel.app/
+3. For this project I have used my github account (harshal's github account and repo)
+4. For this project I have used my vercel account (for deployment): https://vercel.com/harshalpatil51/swaraj-finance-tracker-frontend/deployments
